@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BMI Calculator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #6ee7b7, #3b82f6);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Arial', sans-serif;
+    }
+    .container {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+    }
+    .result-box {
+      background: #f3f4f6;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin-top: 1rem;
+      display: none;
+    }
+    .healthy { color: #10b981; }
+    .underweight { color: #f59e0b; }
+    .overweight { color: #ef4444; }
+    .obese { color: #dc2626; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">BMI Calculator</h1>
+    <div class="space-y-4">
+      <div>
+        <label for="age" class="block text-sm font-medium text-gray-700">Age</label>
+        <input type="number" id="age" class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter your age" min="1" max="120" required>
+      </div>
+      <div>
+        <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
+        <select id="gender" class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" required>
+          <option value="" disabled selected>Select gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div>
+        <label for="height" class="block text-sm font-medium text-gray-700">Height (meters)</label>
+        <input type="number" id="height" class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 1.75" step="0.01" min="0.5" max="3" required>
+      </div>
+      <div>
+        <label for="weight" class="block text-sm font-medium text-gray-700">Weight (kg)</label>
+        <input type="number" id="weight" class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 70" step="0.1" min="20" max="300" required>
+      </div>
+      <button onclick="calculateBMI()" class="w-full bg-indigo-600 text-white p-2 rounded-md hover:bg-indigo-700 transition duration-200">Calculate BMI</button>
+    </div>
+    <div id="result" class="result-box">
+      <h2 class="text-lg font-semibold text-gray-800">Your BMI Results</h2>
+      <p id="bmi-value" class="text-xl font-bold"></p>
+      <p id="bmi-category" class="text-md"></p>
+      <p id="health-advice" class="text-sm text-gray-600 mt-2"></p>
+    </div>
+  </div>
+
+  <script>
+    function calculateBMI() {
+      const age = parseInt(document.getElementById('age').value);
+      const gender = document.getElementById('gender').value;
+      const height = parseFloat(document.getElementById('height').value);
+      const weight = parseFloat(document.getElementById('weight').value);
+      const resultDiv = document.getElementById('result');
+
+      // Input validation
+      if (!age || !gender || !height || !weight) {
+        alert('Please fill in all fields.');
+        return;
+      }
+      if (height <= 0 || weight <= 0) {
+        alert('Height and weight must be positive numbers.');
+        return;
+      }
+
+      // Calculate BMI
+      const bmi = (weight / (height * height)).toFixed(1);
+      let category = '';
+      let advice = '';
+      let categoryClass = '';
+
+      // Determine BMI category and advice
+      if (bmi < 18.5) {
+        category = 'Underweight';
+        categoryClass = 'underweight';
+        advice = 'You may be underweight. Consider consulting a healthcare provider to assess your diet and health.';
+      } else if (bmi >= 18.5 && bmi <= 24.9) {
+        category = 'Healthy Weight';
+        categoryClass = 'healthy';
+        advice = 'Great job! Your weight is within a healthy range. Maintain a balanced diet and regular exercise.';
+      } else if (bmi >= 25 && bmi <= 29.9) {
+        category = 'Overweight';
+        categoryClass = 'overweight';
+        advice = 'You may be overweight. Consider adopting a healthier lifestyle with balanced nutrition and physical activity.';
+      } else {
+        category = 'Obese';
+        categoryClass = 'obese';
+        advice = 'Your BMI indicates obesity. It’s advisable to consult a healthcare professional for personalized guidance.';
+      }
+
+      // Additional advice based on age and gender
+      if (age < 18) {
+        advice += ' Note: BMI interpretation for individuals under 18 may vary. Consult a pediatrician for accurate assessment.';
+      } else if (age > 65) {
+        advice += ' Note: BMI ranges may be less accurate for older adults due to muscle mass changes. Consult a doctor.';
+      }
+      if (gender === 'female' && bmi < 18.5) {
+        advice += ' For women, low BMI may affect hormonal health. A medical evaluation is recommended.';
+      }
+
+      // Display results
+      document.getElementById('bmi-value').textContent = `BMI: ${bmi}`;
+      document.getElementById('bmi-category').textContent = `Category: ${category}`;
+      document.getElementById('bmi-category').className = categoryClass;
+      document.getElementById('health-advice').textContent = advice;
+      resultDiv.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
